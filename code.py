@@ -7,7 +7,7 @@ import display
 import feeds
 from statuscolors import statusColors
 
-knob = rotaryio.IncrementalEncoder(board.D5, board.SCL)
+knob = rotaryio.IncrementalEncoder(board.SCL, board.D5)
 
 buttons = [
     digitalio.DigitalInOut(board.D10),
@@ -46,7 +46,15 @@ def checkEncoder():
 def checkButtons():
     for i in range(len(buttons)):
         if buttons[i].value == True:
-            feeds.publish(feeds.commanderFeed, i + 1)
+            if i == 5:
+                print(5)
+                feeds.publish(feeds.commanderFeed, 5)
+            elif i == 4: 
+                print(6)
+                feeds.publish(feeds.commanderFeed, 6)
+            else:
+                print(i)
+                feeds.publish(feeds.commanderFeed, i + 1)
 
 def mqtt_message(client, feed_id, payload):
     print("Got {} from {}".format(payload, feed_id))
