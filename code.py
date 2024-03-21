@@ -47,15 +47,9 @@ def checkEncoder():
         timeSinceKnobInteract = time.monotonic()
         display.activateDisplay()
         if newPosition > lastEncoderPosition:
-            if display.selectMode:
-                display.selectItem(1)
-            else:
-                display.temperatureSetting = display.temperatureSetting + 1
+            display.temperatureSetting = display.temperatureSetting + 1
         if newPosition < lastEncoderPosition:
-            if display.selectMode:
-                display.selectItem(-1)
-            else:
-                display.temperatureSetting = display.temperatureSetting - 1
+            display.temperatureSetting = display.temperatureSetting - 1
         display.showTempIndicator()
         newTempPublished = False
         lastEncoderPosition = newPosition
@@ -66,31 +60,8 @@ def checkKnobButton():
     if not knobButton.value:
         KnobInteract = time.monotonic()
         timeSinceKnobInteract = time.monotonic()
-        if display.displayActive or display.sunState == "above_horizon":
-            if display.selectMode:
-                performIconAction(display.selectedItem)
-            else:
-                display.setSelectMode()
-        else:
+        if display.displayActive == False:
             display.activateDisplay()
-
-def performIconAction(index):
-    print(index)
-    if index == 0:
-        feeds.publish(feeds.commanderFeed, 6)
-    if index == 2:
-        if display.deviceStatuses[feeds.subwaySignFeed] == "ON":
-            feeds.publish("subway-sign/status", "OFF")
-        else:
-            feeds.publish("subway-sign/status", "ON")
-    if index == 3:
-        feeds.publish(feeds.commanderFeed, 7)
-    if index == 5:
-        feeds.publish(feeds.commanderFeed, 8)
-    if index == 7:
-        feeds.publish(feeds.commanderFeed, 9)
-    feeds.loop()
-    display.unsetSelectMode()
 
 def checkButtons():
     for i in range(len(buttons)):
@@ -99,8 +70,8 @@ def checkButtons():
                 print(5)
                 feeds.publish(feeds.commanderFeed, 5)
             elif i == 4: 
-                print(7)
-                feeds.publish(feeds.commanderFeed, 7)
+                print(6)
+                feeds.publish(feeds.commanderFeed, 6)
             else:
                 print(i)
                 feeds.publish(feeds.commanderFeed, i + 1)

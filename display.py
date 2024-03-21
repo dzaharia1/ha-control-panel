@@ -12,8 +12,6 @@ temperatureSetting = 70
 temperatureReading = 66
 thermostatMode = statusColors["state/thermostat-mode-command"]["heat"]
 displayActive = False
-selectMode = False
-selectedItem = -1
 
 temperatureDisplay = neopixel.NeoPixel(board.SDA, 16, pixel_order=neopixel.RGB)
 statusRowOne = neopixel.NeoPixel(board.A5, 4, pixel_order=neopixel.RGB)
@@ -64,10 +62,8 @@ def setBrightness(state):
     sunState = state
     if sunState == "above_horizon":
         brightness = dayBrightness
-    elif sunState == "below_horizon" and displayActive == True:
+    elif sunState == "below_horizon":
         brightness = nightBrightness
-    elif sunState == "below_horizon" and displayActive == False:
-        brightness = offBrightness
     elif sunState == "off":
         brightness = offBrightness
 
@@ -140,43 +136,11 @@ def activateDisplay():
 def deActivateDisplay():
     global displayActive
     global brightness
-    global selectMode
-    global selectedItem
     if displayActive:
         print("Deactivating")
         displayActive = False
-        selectMode = False
-        if sunState == "below_horizon":
-            brightness = offBrightness
+        brightness = offBrightness
         showTempIndicator()
         for thisDevice in deviceStatuses:
             setStatus(thisDevice, deviceStatuses[thisDevice])
 
-def setSelectMode():
-    global selectMode
-    global selectedItem
-    selectMode = True
-    selectedItem = -1
-    selectItem(1)
-
-def unsetSelectMode():
-    global selectMode
-    selectMode = False
-    for thisDevice in deviceStatuses:
-        setStatus(thisDevice, deviceStatuses[thisDevice])
-
-def selectItem(direction):
-    global selectedItem
-    selectedItem = selectedItem + direction
-    selectedItemColor = tuple(value * brightness for value in (0, .5, 1))
-    setBrightness(sunState)
-    if selectedItem >= 0 and selectedItem <= 3:
-        statusRowOne[selectedItem] = selectedItemColor
-    elif selectedItem > 3 and selectedItem <= 7:
-        statusRowTwo[selectedItem - 4] = selectedItemColor
-    elif selectedItem < 0:
-        selectedItem = 7
-        statusRowTwo[selectedItem - 4] = selectedItemColor
-    elif selectedItem > 7:
-        selectedItem = 0
-        statusRowOne[selectedItem] = selectedItemColor
