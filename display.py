@@ -168,7 +168,6 @@ def unsetSelectMode():
 def selectItem(direction):
     global selectedItem
     selectedItem = selectedItem + direction
-    print(selectedItem)
     selectedItemColor = tuple(value * brightness for value in (0, .5, 1))
     setBrightness(sunState)
     if selectedItem >= 0 and selectedItem <= 3:
@@ -177,7 +176,6 @@ def selectItem(direction):
         statusRowTwo[selectedItem - 4] = selectedItemColor
     elif selectedItem < 0:
         selectedItem = 7
-        print(selectedItem)
         statusRowTwo[selectedItem - 4] = selectedItemColor
     elif selectedItem > 7:
         selectedItem = 0
