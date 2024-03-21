@@ -1,16 +1,17 @@
 import board
 import neopixel
+import digitalio
 from statuscolors import statusColors
 
 dayBrightness = 30
 nightBrightness = 10
-brightness = dayBrightness
+brightness = nightBrightness
+offBrightness = 2
+sunState = "below_horizon"
 temperatureSetting = 70
 temperatureReading = 66
-thermostatHeating = (1, .5, .1)
-thermostatCooling = (.1, .1, 1)
-thermostatOff = (.5, .5, .5)
-thermostatMode = thermostatHeating
+thermostatMode = statusColors["state/thermostat-mode-command"]["heat"]
+displayActive = False
 
 temperatureDisplay = neopixel.NeoPixel(board.SDA, 16, pixel_order=neopixel.RGB)
 statusRowOne = neopixel.NeoPixel(board.A5, 4, pixel_order=neopixel.RGB)
@@ -21,6 +22,18 @@ for light in statusRowTwo:
     light = (0, 0, 0)
 statusRowOne.show()
 statusRowTwo.show()
+
+deviceStatuses = {
+    "state/vacuum": "cleaning",
+    "sensor/air-quality": "30",
+    "subway-sign/switch": "ON",
+    "state/media": "playing",
+    "state/fan-on": "1",
+    "state/humidifier": "on",
+    "state/humidifier-empty": "off",
+    "state/video-call": "on",
+    "state/tv": "on",
+}
 
 
 statusLightsDictionaryOne = {
@@ -39,17 +52,29 @@ statusLightsDictionaryTwo = {
     "battery": 4
 }
 
-def setBrightness(sunState):
+def setThermostatMode(mode):
+    global thermostatMode
+    thermostatMode = statusColors["state/thermostat-mode-command"][mode]
+
+def setBrightness(state):
     global brightness
+    global sunState
+    sunState = state
     if sunState == "above_horizon":
         brightness = dayBrightness
-    else:
+    elif sunState == "below_horizon":
         brightness = nightBrightness
+    elif sunState == "off":
+        brightness = offBrightness
+
     showTempIndicator()
+    for thisDevice in deviceStatuses:
+        setStatus(thisDevice, deviceStatuses[thisDevice])
 
 def setStatus(device, status):
     statusColor = (0, 0, 0)
-            
+    deviceStatuses[device] = status
+    # if displayActive == True or brightness == dayBrightness:
     if status in statusColors[device]:
         statusColor = tuple(value * brightness for value in statusColors[device][status])
 
@@ -78,8 +103,11 @@ def setStatus(device, status):
         statusRowOne[statusLightsDictionaryOne[device]] = statusColor
     else:
         statusRowTwo[statusLightsDictionaryTwo[device]] = statusColor
+    # else:
+    #     deActivateDisplay()
 
 def showTempIndicator():
+    # if displayActive == True or brightness == dayBrightness:
     tempSettingIndex = 77 - temperatureSetting
     tempSettingIndex = max(0, tempSettingIndex)
     tempSettingIndex = min(14, tempSettingIndex)
@@ -94,3 +122,27 @@ def showTempIndicator():
             temperatureDisplay[i] = tuple(value * brightness for value in thermostatMode)
         if i == tempSettingIndex:
             temperatureDisplay[i] = (brightness, brightness, brightness)
+
+def activateDisplay():
+    global displayActive
+    if not displayActive:
+        displayActive = True
+        print("Activating")
+        setBrightness(sunState)
+        # showTempIndicator()
+        # for thisDevice in deviceStatuses:
+        #     setStatus(thisDevice, deviceStatuses[thisDevice])
+
+def deActivateDisplay():
+    global displayActive
+    global brightness
+    if displayActive:
+        print("Deactivating")
+        displayActive = False
+        brightness = offBrightness
+        showTempIndicator()
+        for thisDevice in deviceStatuses:
+            setStatus(thisDevice, deviceStatuses[thisDevice])
+        # temperatureDisplay.fill((0, 0, 0))
+        # statusRowOne.fill((0, 0, 0))
+        # statusRowTwo.fill((0, 0, 0))

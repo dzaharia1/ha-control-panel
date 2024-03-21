@@ -18,7 +18,7 @@ statusColors = {
         "1": (1, 1, 1)
     },
     "state/thermostat-mode-command": {
-        "cool": (.2, .2, 1),
+        "cool": (.1, .3, 1),
         "heat": (1, .5, .1),
         "off": (0, 0, 0)
     },
