@@ -1,7 +1,7 @@
 statusColors = {
     "state/vacuum": {
         "cleaning": (0, 1, 0),
-        "returning": (0, 1, 1),
+        "returning": (0, 1, 0),
         "paused": (1, 1, 0),
         "docked": (0, 0, 0),
         "idle": (0, 0, 0),
