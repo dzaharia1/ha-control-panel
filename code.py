@@ -60,7 +60,9 @@ def checkKnobButton():
     if not knobButton.value:
         KnobInteract = time.monotonic()
         timeSinceKnobInteract = time.monotonic()
-        if display.displayActive == False:
+        if display.displayActive:
+            display.selectNextPosition()
+        else:
             display.activateDisplay()
 
 def checkButtons():

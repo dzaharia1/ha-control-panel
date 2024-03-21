@@ -71,6 +71,20 @@ def setBrightness(state):
     for thisDevice in deviceStatuses:
         setStatus(thisDevice, deviceStatuses[thisDevice])
 
+selectedPosition = -1
+def selectNextPosition():
+    global selectedPosition
+    selectedPosition = selectedPosition + 1
+    setBrightness(sunState)
+    if selectedPosition <= 3:
+        statusRowOne[selectedPosition] = tuple(value * brightness for value in (0, .2, 1))
+    elif selectedPosition > 3 and selectedPosition <= 7:
+        statusRowTwo[selectedPosition - 4] = tuple(value * brightness for value in (0, .2, 1))
+    elif selectedPosition > 7:
+        selectedPosition = 0
+        statusRowOne[selectedPosition] = tuple(value * brightness for value in (0, .2, 1))
+        
+
 def setStatus(device, status):
     statusColor = (0, 0, 0)
     deviceStatuses[device] = status
@@ -129,20 +143,16 @@ def activateDisplay():
         displayActive = True
         print("Activating")
         setBrightness(sunState)
-        # showTempIndicator()
-        # for thisDevice in deviceStatuses:
-        #     setStatus(thisDevice, deviceStatuses[thisDevice])
 
 def deActivateDisplay():
     global displayActive
     global brightness
+    global selectedPosition
     if displayActive:
         print("Deactivating")
         displayActive = False
+        selectedPosition = -1
         brightness = offBrightness
         showTempIndicator()
         for thisDevice in deviceStatuses:
             setStatus(thisDevice, deviceStatuses[thisDevice])
-        # temperatureDisplay.fill((0, 0, 0))
-        # statusRowOne.fill((0, 0, 0))
-        # statusRowTwo.fill((0, 0, 0))
