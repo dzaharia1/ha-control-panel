@@ -7,7 +7,7 @@ dayBrightness = 30
 nightBrightness = 10
 brightness = nightBrightness
 offBrightness = 2
-sunState = "below_horizon"
+sunState = "1"
 temperatureSetting = 70
 temperatureReading = 66
 thermostatMode = statusColors["state/thermostat-mode-command"]["heat"]
@@ -62,11 +62,11 @@ def setBrightness(state):
     global brightness
     global sunState
     sunState = state
-    if sunState == "above_horizon":
+    if sunState == "1":
         brightness = dayBrightness
-    elif sunState == "below_horizon" and displayActive == True:
+    elif sunState == "0" and displayActive == True:
         brightness = nightBrightness
-    elif sunState == "below_horizon" and displayActive == False:
+    elif sunState == "0" and displayActive == False:
         brightness = offBrightness
     elif sunState == "off":
         brightness = offBrightness
@@ -146,7 +146,7 @@ def deActivateDisplay():
         print("Deactivating")
         displayActive = False
         selectMode = False
-        if sunState == "below_horizon":
+        if sunState == "0":
             brightness = offBrightness
         showTempIndicator()
         for thisDevice in deviceStatuses:
