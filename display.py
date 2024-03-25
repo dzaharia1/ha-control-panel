@@ -77,7 +77,6 @@ def setBrightness(state):
 def setStatus(device, status):
     statusColor = (0, 0, 0)
     deviceStatuses[device] = status
-    # if displayActive == True or brightness == dayBrightness:
     if status in statusColors[device]:
         statusColor = tuple(value * brightness for value in statusColors[device][status])
 
@@ -106,11 +105,8 @@ def setStatus(device, status):
         statusRowOne[statusLightsDictionaryOne[device]] = statusColor
     else:
         statusRowTwo[statusLightsDictionaryTwo[device]] = statusColor
-    # else:
-    #     deActivateDisplay()
 
 def showTempIndicator():
-    # if displayActive == True or brightness == dayBrightness:
     tempSettingIndex = 77 - temperatureSetting
     tempSettingIndex = max(0, tempSettingIndex)
     tempSettingIndex = min(14, tempSettingIndex)
@@ -132,9 +128,6 @@ def activateDisplay():
         displayActive = True
         print("Activating")
         setBrightness(sunState)
-        # showTempIndicator()
-        # for thisDevice in deviceStatuses:
-        #     setStatus(thisDevice, deviceStatuses[thisDevice])
 
 def deActivateDisplay():
     global displayActive

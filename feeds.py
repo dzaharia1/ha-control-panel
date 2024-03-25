@@ -48,7 +48,6 @@ def disconnected(client):
 
 def subscribed(a, b, c, d):
     print("Subscribed")
-    # print(mqtt_client._subscribed_topics)
 
 def connect():
     try:
@@ -56,7 +55,6 @@ def connect():
     except:
         print("Failed to connect to wifi")
         time.sleep(3)
-        # microcontroller.reset()
         connect()
     print("Connected to wifi")
 
