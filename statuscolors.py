@@ -22,7 +22,7 @@ statusColors = {
         "heat": (1, .5, .1),
         "off": (0, 0, 0)
     },
-    "subway-sign/switch": {
+    "state/subway-sign": {
         "ON": (1, 1, 1),
         "OFF": (0, 0, 0)
     },

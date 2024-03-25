@@ -28,7 +28,7 @@ statusRowTwo.show()
 deviceStatuses = {
     "state/vacuum": "cleaning",
     "sensor/air-quality": "30",
-    "subway-sign/switch": "ON",
+    "state/subway-sign": "ON",
     "state/media": "playing",
     "state/fan-on": "1",
     "state/humidifier": "on",
@@ -37,11 +37,10 @@ deviceStatuses = {
     "state/tv": "on",
 }
 
-
 statusLightsDictionaryOne = {
     "state/vacuum": 0,
     "sensor/air-quality": 1,
-    "subway-sign/switch": 2,
+    "state/subway-sign": 2,
     "state/media": 3
 }
 
