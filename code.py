@@ -89,6 +89,8 @@ def performIconAction(index):
             feeds.publish("subway-sign/status", "ON")
     if index == 3:
         feeds.publish(feeds.commanderFeed, 7)
+    if index == 4:
+        feeds.publish(feeds.commanderFeed, 10)
     if index == 5:
         feeds.publish(feeds.commanderFeed, 8)
     if index == 7:
