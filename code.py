@@ -7,8 +7,8 @@ import display
 import feeds
 from statuscolors import statusColors
 
-knob = rotaryio.IncrementalEncoder(board.SCL, board.D5)
-knobButton = digitalio.DigitalInOut(board.A2)
+knob = rotaryio.IncrementalEncoder(board.A2, board.A1)
+knobButton = digitalio.DigitalInOut(board.A0)
 knobButton.direction = digitalio.Direction.INPUT
 knobButton.pull = digitalio.Pull.UP
 
@@ -46,15 +46,15 @@ def checkEncoder():
         KnobInteract = time.monotonic()
         timeSinceKnobInteract = time.monotonic()
         display.activateDisplay()
-        if newPosition > lastEncoderPosition:
-            if display.selectMode:
+        if display.selectMode:
+            if newPosition > lastEncoderPosition:
                 display.selectItem(1)
             else:
-                display.temperatureSetting = display.temperatureSetting + 1
-        if newPosition < lastEncoderPosition:
-            if display.selectMode:
                 display.selectItem(-1)
-            else:
+        else:
+            if newPosition > lastEncoderPosition:
+                display.temperatureSetting = display.temperatureSetting + 1
+            if newPosition < lastEncoderPosition:
                 display.temperatureSetting = display.temperatureSetting - 1
         display.showTempIndicator()
         newTempPublished = False
@@ -66,13 +66,11 @@ def checkKnobButton():
     if not knobButton.value:
         KnobInteract = time.monotonic()
         timeSinceKnobInteract = time.monotonic()
-        if display.displayActive or display.sunState == "above_horizon":
-            if display.selectMode:
-                performIconAction(display.selectedItem)
-            else:
-                display.setSelectMode()
+        display.activateDisplay()
+        if display.selectMode:
+            performIconAction(display.selectedItem)
         else:
-            display.activateDisplay()
+            display.setSelectMode()
 
 def performIconAction(index):
     print(index)
