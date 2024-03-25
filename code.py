@@ -27,11 +27,19 @@ for button in buttons:
 lastEncoderPosition = None
 timeSinceKnobInteract = time.monotonic()
 KnobInteract = time.monotonic()
+lastTemperaturePublish = time.monotonic()
+lastEncoderMove = time.monotonic()
+timeSinceLastEncoderMove = time.monotonic()
+newTempPublished = True
 
 def checkEncoder():
     global lastEncoderPosition
     global timeSinceKnobInteract
     global KnobInteract
+    global lastEncoderMove
+    global timeSinceLastEncoderMove
+    global newTempPublished
+
     newPosition = knob.position
     if lastEncoderPosition == None:
         lastEncoderPosition = newPosition
@@ -39,6 +47,8 @@ def checkEncoder():
     if newPosition != lastEncoderPosition:
         KnobInteract = time.monotonic()
         timeSinceKnobInteract = time.monotonic()
+        lastEncoderMove = time.monotonic()
+        timeSinceLastEncoderMove = time.monotonic()
         display.activateDisplay()
         if display.selectMode:
             if newPosition > lastEncoderPosition:
@@ -48,11 +58,10 @@ def checkEncoder():
         else:
             if newPosition > lastEncoderPosition:
                 display.temperatureSetting = display.temperatureSetting + 1
-                feeds.publish(feeds.temperatureSettingFeedCommand, display.temperatureSetting)
             if newPosition < lastEncoderPosition:
                 display.temperatureSetting = display.temperatureSetting - 1
-                feeds.publish(feeds.temperatureSettingFeedCommand, display.temperatureSetting)
-        display.showTempIndicator()
+            newTempPublished = False
+            display.showTempIndicator()
         lastEncoderPosition = newPosition
         time.sleep(.1)
 
@@ -102,7 +111,7 @@ def checkButtons():
             time.sleep(.1)
 
 def mqtt_message(client, feed_id, payload):
-    # print("Got {} from {}".format(payload, feed_id))
+    print("Got {} from {}".format(payload, feed_id))
 
     if feed_id == feeds.temperatureSensorFeed:
         display.temperatureReading = round(float(payload))
@@ -123,9 +132,16 @@ feeds.mqtt_client.on_message = mqtt_message
 while (True):
     checkEncoder()
     checkKnobButton()
+    checkButtons()
+    if (timeSinceLastEncoderMove - lastEncoderMove) > .2 and not newTempPublished and not display.selectMode:
+        print("publishing temperature")
+        feeds.publish(feeds.temperatureSettingFeedCommand, display.temperatureSetting)
+        newTempPublished = True
+    timeSinceLastEncoderMove = time.monotonic()
     timeSinceKnobInteract = time.monotonic()
     if timeSinceKnobInteract - KnobInteract > 5:
         display.deActivateDisplay()
-    checkButtons()
-    if not display.selectMode:
+    if (not display.selectMode):
         feeds.loop()
+    else:
+        time.sleep(.1)
