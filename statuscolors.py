@@ -51,9 +51,6 @@ statusColors = {
         "ending": (1, 0, 0),
         "off": (0, 0, 0)
     },
-    # "state/chromecast": {
-        
-    # },
     "state/tv": {
         "on": (1, 1, 1),
         "off": (0, 0, 0)
