@@ -44,7 +44,7 @@ statusColors = {
         "true": (1, 0, 0)
     },
     "state/humidifier-empty": {
-        "on": (.6, 0, 0)
+        "on": (1, 0, 0)
     },
     "state/video-call": {
         "on": (0, 1, 0),
