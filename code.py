@@ -6,6 +6,7 @@ import rotaryio
 import display
 import feeds
 from statuscolors import statusColors
+import microcontroller
 
 knob = rotaryio.IncrementalEncoder(board.A2, board.A1)
 knobButton = digitalio.DigitalInOut(board.A0)
@@ -114,6 +115,7 @@ def checkButtons():
 
 def mqtt_message(client, feed_id, payload):
     print("Got {} from {}".format(payload, feed_id))
+    currSunState = display.sunState
 
     if feed_id == feeds.temperatureSensorFeed:
         display.temperatureReading = round(float(payload))
@@ -126,6 +128,9 @@ def mqtt_message(client, feed_id, payload):
         display.showTempIndicator()     
     elif feed_id == feeds.sunFeed:
         display.setBrightness(payload)
+        if (payload == "0" and currSunState != "0"):
+            # reset to keep the execution fresh every day
+            microcontroller.reset()
     else:
         display.setStatus(feed_id, payload)
 
